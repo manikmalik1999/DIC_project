@@ -1,0 +1,91 @@
+#include <ESP8266WiFi.h>
+
+String  i;
+#define LED_RED     0
+#define LED_GREEN   5
+#define LED_BLUE    4
+float wave;
+float red,blue,green;
+float gamma1 =0.8;
+float attenuation;
+WiFiServer server(80);
+
+void setup()
+{
+  i = "";
+
+Serial.begin(9600);
+  pinMode(LED_RED, OUTPUT);
+    pinMode(LED_GREEN, OUTPUT);
+    pinMode(LED_BLUE, OUTPUT);
+    digitalWrite(LED_RED, 1);
+    digitalWrite(LED_GREEN, 1);
+    digitalWrite(LED_BLUE, 1);
+  WiFi.disconnect();
+  delay(3000);
+   WiFi.begin("MMM","123456789");
+  Serial.println("connecting to Wi-Fi");
+  while ((!(WiFi.status() == WL_CONNECTED))){
+    delay(300);
+    Serial.print(".....");
+    Serial.println((WiFi.localIP().toString()));
+
+  }
+  server.begin();
+
+}
+
+
+void loop()
+{
+
+    WiFiClient client = server.available();
+    if (!client) { return; }
+    while(!client.available()){  delay(1); }
+    i = (client.readStringUntil('\r'));
+    i.remove(0, 5);
+    i.remove(i.length()-9,9);
+    i.replace(" ","");
+          if(wave>=370 && wave<=760){
+               if (wave >= 370 & wave <= 380) {
+                 red=0;green=0;blue=0;
+                  }   
+              else if (wave >= 380 & wave <= 440) {
+                  attenuation = 0.3 + 0.7 * (wave - 380) / (440 - 380);
+                  red = pow(((-(wave - 440) / (440 - 380)) * attenuation), gamma1);
+                  green = 0.0;
+                  blue = pow((1.0 * attenuation),gamma1);
+                  }
+              else if (wave >= 440 & wave <= 490) {
+                  red = 0.0;
+                  green = pow(((wave - 440) / (490 - 440)), gamma1);
+                  blue = 1.0;
+                  }
+              else if (wave >= 490 & wave <= 510) {
+                  red = 0.0;
+                  green = 1.0;
+                  blue = pow((-(wave - 510) / (510 - 490)) , gamma1);
+                  }
+              else if (wave >= 510 & wave <= 580) {
+                  red = pow(((wave - 510) / (580 - 510)), gamma1);
+                  green = 1.0;
+                  blue = 0.0;
+                  }
+              else if (wave >= 580 & wave <= 645) {
+                  red = 1.0;
+                  green = pow((-(wave - 645) / (645 - 580)),gamma1);
+                  blue = 0.0;
+                  }
+              else if (wave >= 645 & wave<= 750) {
+                  attenuation = 0.3 + 0.7 * (750 - wave) / (750 - 645);
+                  red = pow((1.0 * attenuation), gamma1);
+                  green = 0.0;
+                  blue = 0.0;
+                  }
+              else {
+                  red = 1;
+                  green = 1;
+                 blue = 1;
+                  }
+      
+  }
