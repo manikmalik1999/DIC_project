@@ -1,7 +1,7 @@
 #include <ESP8266WiFi.h>
 
 String  i;
-#define LED_RED     0
+#define LED_RED     0 
 #define LED_GREEN   5
 #define LED_BLUE    4
 float wave;
@@ -15,7 +15,7 @@ void setup()
   i = "";
 
 Serial.begin(9600);
-  pinMode(LED_RED, OUTPUT);
+  pinMode(LED_RED, OUTPUT); //initialize output
     pinMode(LED_GREEN, OUTPUT);
     pinMode(LED_BLUE, OUTPUT);
     digitalWrite(LED_RED, 1);
